@@ -6,9 +6,9 @@ $home = 'http://'.$_SERVER['SERVER_NAME'].'/linktrackr/index.php';
 
 
 // Create the Transport
-$transport = Swift_SmtpTransport::newInstance('localhost', 25)
-  // ->setUsername('kirankoduru11')
-  // ->setPassword('mostwanted')
+$transport = Swift_SmtpTransport::newInstance('smtp.gmail.com', 465,'ssl')
+  ->setUsername('kirankoduru11')
+  ->setPassword('mostwanted')
   ;
 
 /*
@@ -71,7 +71,7 @@ if(isset($_POST)){
 		$message->setFrom(array($_POST['from-address']));
 	
 	}
-	
+
 // Send the message
 $numSent = $mailer->send($message);
 
