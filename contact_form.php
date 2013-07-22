@@ -1,53 +1,100 @@
 <?
 require_once ('header.php');
+require_once('mysql_connect.php');
 require_once ('include/swift-mailer/lib/swift_required.php');
+$home = 'http://'.$_SERVER['SERVER_NAME'].'/linktrackr/index.php';
+
+
+// Create the Transport
+$transport = Swift_SmtpTransport::newInstance('localhost', 25)
+  // ->setUsername('kirankoduru11')
+  // ->setPassword('mostwanted')
+  ;
+
+/*
+You could alternatively use a different transport such as Sendmail or Mail:
+
+// Sendmail
+$transport = Swift_SendmailTransport::newInstance('/usr/sbin/sendmail -bs');
+
+// Mail
+$transport = Swift_MailTransport::newInstance();
+*/
+
+// Create the Mailer using your created Transport
+$mailer = Swift_Mailer::newInstance($transport);
 
 // echo function_exists('proc_open') ? "Yep, that will work" : "Sorry, that won't work";
 
-// Values from POST
-$message = $_POST['message'];
-
 // Create the message
-$message = Swift_Message::newInstance()
+$message = Swift_Message::newInstance()	;
 
 // Give the message a subject
-->setSubject($message)
+$message->setSubject('My Subject');
 
-// Set the From address with an associative array
-->setFrom(array('john@doe.com' => 'John Doe'))
+// Values from POST
+if(isset($_POST)){
+	if(isset($_POST['message'])) {
+		$body = $_POST['message'];
 
-// Set the To addresses with an associative array
-->setTo(array('receiver@domain.org', 'other@domain.org' => 'A name'))
+		// Give the message a subject
+		$message->setBody($body);
+	}
 
-// Give it a body
-->setBody('Here is the message itself')
+	if(isset($_POST['to-address'])) {
+				
+		$to_addresses = array();		
+		
+		// dummy insert
+		$query = "INSERT INTO users (email,link) VALUES ('krk311','hello')";
+		$mysqli->query($query);
+		$new_id = $mysqli->insert_id;
+		
+		$to_address = $_POST['to-address'];
 
-// And optionally an alternative body
-->addPart('<q>Here is the message itself</q>', 'text/html')
+		// Set the From address with an associative array
+		$message->setFrom(array($to_address));
 
-// Optionally add any attachments
-->attach(Swift_Attachment::fromPath('my-document.pdf'))
+		$to_addresses = explode(',', $to_address);		
+		foreach ($to_addresses as $key => $value) {
+			$new_id++;
+			$link = $home.'?uid='.$new_id;
+			$query = "INSERT INTO users (email,link,id) VALUES ('$value','$link',$new_id)";
+			$mysqli->query($query);			
+		}
 
-;
+	}	
+
+	if(isset($_POST['from-address'])) {
+	
+		// Set the from addresses with an associative array
+		$message->setFrom(array($_POST['from-address']));
+	
+	}
+	
+// Send the message
+$numSent = $mailer->send($message);
+
+printf("Sent %d messages\n", $numSent);
+
+
+}
 
 
 ?>
 <div class="container">
-<form class="well span8" action="contact_form.php">
+<form class="well span8" action="contact_form.php" method="POST">
   <div class="row">
 		<div class="span3">
-			<label>First Name</label>
-			<input type="text" class="span3 height30" placeholder="Your First Name">
-			<label>Last Name</label>
-			<input type="text" class="span3 height30" placeholder="Your Last Name">
-			<label>Email Address</label>
-			<input type="text" class="span3 height30" placeholder="Your email address">
+			<label>From Address</label>
+			<input type="text" class="span3 height30" name="from-address" placeholder="Your Email">
+			<label>To Address</label>
+			<input type="text" class="span3 height30" name="to-address" placeholder="To Email Address">
           	<label>Subject</label>
 			<select id="subject" name="subject" class="span3">
 				<option value="na" selected="">Choose One:</option>
-				<option value="service">General Customer Service</option>
-				<option value="suggestions">Suggestions</option>
-				<option value="product">Product Support</option>
+				<option value="service">Send to all</option>
+				<option value="suggestions">Send to one</option>
 			</select>
 		</div>
 		<div class="span5">
