@@ -6,7 +6,7 @@ $home = 'http://'.$_SERVER['SERVER_NAME'].'/linktrackr/index.php';
 
 
 // Create the Transport
-$transport = Swift_SmtpTransport::newInstance('smtp.gmail.com', 465,'ssl')
+$transport = Swift_SmtpTransport::newInstance('smtp.gmail.com', 465,"ssl")
   ->setUsername('kirankoduru11')
   ->setPassword('mostwanted')
   ;
@@ -53,7 +53,7 @@ if(isset($_POST)){
 		$to_address = $_POST['to-address'];
 
 		// Set the From address with an associative array
-		$message->setFrom(array($to_address));
+		$message->setTo(array($to_address));
 
 		$to_addresses = explode(',', $to_address);		
 		foreach ($to_addresses as $key => $value) {
