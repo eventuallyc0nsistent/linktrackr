@@ -24,22 +24,16 @@ $transport = Swift_MailTransport::newInstance();
 // Create the Mailer using your created Transport
 $mailer = Swift_Mailer::newInstance($transport);
 
+
+// To use the ArrayLogger
+$logger = new Swift_Plugins_Loggers_ArrayLogger();
+$mailer->registerPlugin(new Swift_Plugins_LoggerPlugin($logger));
+
 // echo function_exists('proc_open') ? "Yep, that will work" : "Sorry, that won't work";
-
-// Create the message
-$message = Swift_Message::newInstance()	;
-
-// Give the message a subject
-$message->setSubject('My Subject');
 
 // Values from POST
 if(isset($_POST)){
-	if(isset($_POST['message'])) {
-		$body = $_POST['message'];
-
-		// Give the message a subject
-		$message->setBody($body);
-	}
+	
 
 	if(isset($_POST['to-address'])) {
 				
@@ -52,30 +46,72 @@ if(isset($_POST)){
 		
 		$to_address = $_POST['to-address'];
 
-		// Set the From address with an associative array
-		$message->setTo(array($to_address));
+		
+		$replacements = array();
 
 		$to_addresses = explode(',', $to_address);		
-		foreach ($to_addresses as $key => $value) {
+		foreach ($to_addresses as $single_to_address) { 
+			
 			$new_id++;
 			$link = $home.'?uid='.$new_id;
-			$query = "INSERT INTO users (email,link,id) VALUES ('$value','$link',$new_id)";
+			$replacements[$single_to_address] = array(
+				'{link}' => $link
+			);
+			$query = "INSERT INTO users (email,link,id) VALUES ('$single_to_address','$link',$new_id)";
 			$mysqli->query($query);			
 		}
 
+
+		$decorator = new Swift_Plugins_DecoratorPlugin($replacements);
+		$mailer->registerPlugin($decorator);
+
+
+		// Create the message
+		$message = Swift_Message::newInstance()	;
+
+
+		// Give the message a subject
+		$message->setSubject('My Subject');
+		// Give the message a subject
+		$message->setBody("{link}");
+		
+		// if(isset($_POST['message'])) {
+		// 	$message = $_POST['message'];
+		// 	$body = "hello how are you ? {link}";
+		// }
+
+
+		if(isset($_POST['from-address'])) {
+		
+			// Set the from addresses with an associative array
+			$message->setFrom(array($_POST['from-address']));
+
+		
+		}
+
+		foreach ($to_addresses as $single_to_address) { 
+			// Set the From address with an associative array
+			$message->addTo($single_to_address);
+			
+			// Send the message
+			$numSent = $mailer->send($message);
+
+			printf("Sent %d messages\n", $numSent);
+		}
+
+
+
+			// Dump the log contents
+			// NOTE: The EchoLogger dumps in realtime so dump() does nothing for it
+			// echo "<pre>";
+			// echo $logger->dump();
+
+
 	}	
 
-	if(isset($_POST['from-address'])) {
-	
-		// Set the from addresses with an associative array
-		$message->setFrom(array($_POST['from-address']));
-	
-	}
 
-// Send the message
-$numSent = $mailer->send($message);
 
-printf("Sent %d messages\n", $numSent);
+
 
 
 }
