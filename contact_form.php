@@ -7,8 +7,8 @@ $home = 'http://'.$_SERVER['SERVER_NAME'].'/linktrackr/index.php';
 
 // Create the Transport
 $transport = Swift_SmtpTransport::newInstance('smtp.gmail.com', 465,"ssl")
-  ->setUsername('kirankoduru11')
-  ->setPassword('mostwanted')
+  ->setUsername('USERNAME')
+  ->setPassword('PASSWORD')
   ;
 
 /*
