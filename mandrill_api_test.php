@@ -57,12 +57,33 @@ if($_POST)
 
 
 ?>
+<!doctype html>
+<html>
+<head>
+	<title>Mandrill API Test</title>
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+	
+</head>
+<body>
+	<div class="container">
 
-<form method="POST" action="">
-<label>Email</label>
-<input type="text" name="email"/>
-<label>Name</label>
-<input type="text" name="name"/>
-<button>Download Now</button>
-</form>
+		<form method="POST" action="">
+			<div class="form" style="display:none">
+				<label>Email</label>
+				<input type="text" name="email"/>
+				<label>Name</label>
+				<input type="text" name="name"/>
+			</div>
+			<button class="btn">Download Now</button>
+		</form>
+	</div>
+	<script>
+		$(".btn").hover(function(){
+			$('.form').show(500);
+		});
+		$
+	</script>
+</body>
+</html>
+
 
