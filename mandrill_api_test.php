@@ -10,18 +10,15 @@ if($_POST)
 	 */
 	$email = $_POST['email'];
 	$name  = $_POST['name'];
-	// $tag = 'download-the-esf-policy-primer-on-microgrids-and-energy-security';
-	// $tag = 'premium-report-natural-gas-and-renewables';
-	$tag = 'primer-on-natural-gas';
-	// $tag = 'primer-on-solar-energy-policy';
+	$tag = 'test-tag';
 
 	try
 	{
 
-	$mandrill = new Mandrill('JoLOKzBCZCSLVOOrIeXg-g');
+	$mandrill = new Mandrill('YOUR API KEY');
 	$message = array(
-	        'subject'=> 'ESF Policy Primer on Microgrids and Energy Security',
-	        'from_email' => 'info@energysolforum.com',
+	        'subject'=> 'Custom Subject',
+	        'from_email' => 'mail@example.com',
 	        'to' => array(
 	            array(
 	                'email' => $email,
