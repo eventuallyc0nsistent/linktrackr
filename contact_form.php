@@ -18,8 +18,8 @@ $link = $home.'?uid='.$id;
 
 // Create the Transport
 $transport = Swift_SmtpTransport::newInstance('smtp.gmail.com', 465,"ssl")
-  ->setUsername('skumar.dataservices')
-  ->setPassword("qwerty!1!") ;
+  ->setUsername('username')
+  ->setPassword("password") ;
 
 // Create the Mailer using your created Transport
 $mailer = Swift_Mailer::newInstance($transport);
@@ -95,3 +95,4 @@ if(isset($_POST))
 	</div>
 </form>
 </div>
+<?php require_once ('footer.php'); ?>
