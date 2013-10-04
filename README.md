@@ -10,7 +10,7 @@ This program will track those links clicked by students for test project.
 
 The have an id,email,unique link associated with them and a flag that is set when they click it.
 
-###APIs
+###API
 
-+ Mandrill - (page)[maildrill_apit.test.php]
-+ Swiftmailer
++ Mandrill - [maildrill_api_test.php](https://github.com/kirankoduru/linktrackr/blob/master/mandrill_api_test.php)
++ Swiftmailer - [contact_form.php](https://github.com/kirankoduru/linktrackr/blob/master/contact_form.php)
