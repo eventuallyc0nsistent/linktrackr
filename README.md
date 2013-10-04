@@ -12,5 +12,5 @@ The have an id,email,unique link associated with them and a flag that is set whe
 
 ###API
 
-+ Mandrill - [maildrill_api_test.php](https://github.com/kirankoduru/linktrackr/blob/master/mandrill_api_test.php)
++ Mandrill - [mandrill_api_test.php](https://github.com/kirankoduru/linktrackr/blob/master/mandrill_api_test.php)
 + Swiftmailer - [contact_form.php](https://github.com/kirankoduru/linktrackr/blob/master/contact_form.php)
