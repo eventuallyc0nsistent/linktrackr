@@ -1,5 +1,4 @@
 <?
-require_once('header.php'); 
 require_once('mysql_connect.php');
 
 if(isset($_GET['uid'])) {
@@ -10,8 +9,6 @@ if(isset($_GET['uid'])) {
 
 
 ?>
-
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -37,7 +34,7 @@ if(isset($_GET['uid'])) {
 </head>
 <body>
   <div class="centered">
-    <a href="#">
+    <a href="home.php?uid=<?php echo $id ?>">
       <img src="img/missingplugin2.jpg" alt="Download Now">
     </a>
   </div>

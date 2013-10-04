@@ -4,115 +4,70 @@ require_once('mysql_connect.php');
 require_once ('include/swift-mailer/lib/swift_required.php');
 $home = 'http://'.$_SERVER['SERVER_NAME'].'/linktrackr/index.php';
 
+//fetch the row of the last insert
+$query = "SELECT id FROM users ORDER BY id DESC LIMIT 1";
+$result = $mysqli->query($query);
+
+while ($row=$result->fetch_assoc())
+{
+	$id = $row['id'];
+}
+
+$id++ ;
+$link = $home.'?uid='.$id;
 
 // Create the Transport
 $transport = Swift_SmtpTransport::newInstance('smtp.gmail.com', 465,"ssl")
-  ->setUsername('kirankoduru11')
-  ->setPassword('mostwanted')
-  ;
-
-/*
-You could alternatively use a different transport such as Sendmail or Mail:
-
-// Sendmail
-$transport = Swift_SendmailTransport::newInstance('/usr/sbin/sendmail -bs');
-
-// Mail
-$transport = Swift_MailTransport::newInstance();
-*/
+  ->setUsername('skumar.dataservices')
+  ->setPassword("qwerty!1!") ;
 
 // Create the Mailer using your created Transport
 $mailer = Swift_Mailer::newInstance($transport);
 
-
-// To use the ArrayLogger
-$logger = new Swift_Plugins_Loggers_ArrayLogger();
-$mailer->registerPlugin(new Swift_Plugins_LoggerPlugin($logger));
-
 // echo function_exists('proc_open') ? "Yep, that will work" : "Sorry, that won't work";
 
 // Values from POST
-if(isset($_POST)){
+if(isset($_POST))
+{
+	
 	
 
-	if(isset($_POST['to-address'])) {
-				
-		$to_addresses = array();		
-		
-		// dummy insert
-		$query = "INSERT INTO users (email,link) VALUES ('krk311','hello')";
-		$mysqli->query($query);
-		$new_id = $mysqli->insert_id;
+	if(isset($_POST['to-address'])) 
+	{
 		
 		$to_address = $_POST['to-address'];
 
-		
-		$replacements = array();
-
-		$to_addresses = explode(',', $to_address);		
-		foreach ($to_addresses as $single_to_address) { 
-			
-			$new_id++;
-			$link = $home.'?uid='.$new_id;
-			$replacements[$single_to_address] = array(
-				'{link}' => $link
-			);
-			$query = "INSERT INTO users (email,link,id) VALUES ('$single_to_address','$link',$new_id)";
-			$mysqli->query($query);			
-		}
-
-
-		$decorator = new Swift_Plugins_DecoratorPlugin($replacements);
-		$mailer->registerPlugin($decorator);
-
+		// dummy insert
+		$query = "INSERT INTO users (`email`,`link`,`id`) VALUES ('$to_address','$link',$id)";
+		$mysqli->query($query);		
 
 		// Create the message
 		$message = Swift_Message::newInstance()	;
 
-
 		// Give the message a subject
-		$message->setSubject('My Subject');
+		$message->setSubject($_POST['subject']);
+
+		$body = $_POST['message'];
 		// Give the message a subject
-		$message->setBody("{link}");
-		
-		// if(isset($_POST['message'])) {
-		// 	$message = $_POST['message'];
-		// 	$body = "hello how are you ? {link}";
-		// }
+		$message->setBody($body);
 
-
-		if(isset($_POST['from-address'])) {
+		if(isset($_POST['from-address'])) 
+		{
 		
 			// Set the from addresses with an associative array
 			$message->setFrom(array($_POST['from-address']));
+		}
 
+		// Set the From address with an associative array
+		$message->setTo($to_address);
 		
-		}
+		// Send the message
+		$numSent = $mailer->send($message);
 
-		foreach ($to_addresses as $single_to_address) { 
-			// Set the From address with an associative array
-			$message->addTo($single_to_address);
-			
-			// Send the message
-			$numSent = $mailer->send($message);
-
-			printf("Sent %d messages\n", $numSent);
-		}
-
-
-
-			// Dump the log contents
-			// NOTE: The EchoLogger dumps in realtime so dump() does nothing for it
-			// echo "<pre>";
-			// echo $logger->dump();
-
+		printf("Sent %d messages\n", $numSent);
+	
 
 	}	
-
-
-
-
-
 
 }
 
@@ -126,20 +81,17 @@ if(isset($_POST)){
 			<input type="text" class="span3 height30" name="from-address" placeholder="Your Email">
 			<label>To Address</label>
 			<input type="text" class="span3 height30" name="to-address" placeholder="To Email Address">
-          	<label>Subject</label>
-			<select id="subject" name="subject" class="span3">
-				<option value="na" selected="">Choose One:</option>
-				<option value="service">Send to all</option>
-				<option value="suggestions">Send to one</option>
-			</select>
-		</div>
+        </div>
 		<div class="span5">
+			<br>
+			<input type="text" class="span5	height30" name="subject" placeholder="Subject">
 			<label>Message</label>
 			<textarea name="message" id="message" class="input-xlarge span5" rows="10"></textarea>
+			<label>Paste the link below</label>
+			<?php echo $link ; ?>
 		</div>
 	
 		<button type="submit" class="btn btn-primary pull-right">Send</button>
 	</div>
 </form>
 </div>
-<?php require_once ('footer.php'); ?>
